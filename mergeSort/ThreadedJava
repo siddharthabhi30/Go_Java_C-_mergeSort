@@ -1,1 +1,149 @@
 
+
+
+import org.springframework.util.StopWatch;
+
+import java.sql.Array;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+
+public class MergeSort {
+
+  static Integer[] arr;
+
+
+
+
+
+    static void merge(int start, int mid, int end)
+    {
+
+
+        int start2 = mid + 1;
+
+        // If the direct merge is already sorted
+        if (arr[mid] <= arr[start2]) {
+            return;
+        }
+
+        // Two pointers to maintain start
+        // of both arrays to merge
+        while (start <= mid && start2 <= end) {
+
+
+            // If element 1 is in right place
+            if (arr[start] <= arr[start2]) {
+                start++;
+            }
+            else {
+                int value = arr[start2];
+                int index = start2;
+
+                // Shift all the elements between element 1
+                // element 2, right by 1.
+                while (index != start) {
+                    arr[index] = arr[index - 1];
+                    index--;
+                }
+                arr[start] = value;
+
+                // Update all the pointers
+                start++;
+                mid++;
+                start2++;
+            }
+        }
+    }
+
+    /* l is for left index and r is right index of the
+    sub-array of arr to be sorted */
+   static void mergeSort(int l, int r)
+    {
+        if (l < r) {
+
+            // Same as (l + r) / 2, but avoids overflow
+            // for large l and r
+            int m = l + (r - l) / 2;
+
+            Thread thread=new Thread(()->mergeSort(l,m));
+            Thread thread1=new Thread(()->mergeSort(m+1,r));
+            thread.run();
+            thread1.run();
+            if(!thread.isAlive()&&!thread1.isAlive()){
+
+                merge(l,m,r);
+            }
+
+            // Sort first and second halves
+        //    mergeSort( l, m);
+          //  mergeSort( m + 1, r);
+//            CompletableFuture<Void> future;
+//            CompletableFuture<Void> future2;
+//            future = CompletableFuture.supplyAsync(
+//                   ()-> {
+//                       MergeSort.mergeSort(l, m);
+//
+//                       return null;
+//                   });
+//            future2 = CompletableFuture.supplyAsync(
+//                    ()-> {
+//                        MergeSort.mergeSort(m+1, r);
+//
+//                        return null;
+//                    });
+//            CompletableFuture<Void> allCompleted = CompletableFuture.allOf(future, future2);
+//            allCompleted.thenRun(() -> {
+//
+//                merge( l, m, r);
+//            });
+//
+
+
+            //  System.out.println("hello  l m  r"+l+m+r);
+
+           //Thread thread=new Thread();
+
+
+
+
+
+
+        }
+    }
+    static void populate(int max) {
+        arr=new Integer[max];
+
+
+        for (int i = 0; i < max; i++) {
+
+            arr[i]=(max - i);
+        }
+    }
+
+    public static void main(String[] args) {
+
+        int max=1000000;
+        MergeSort  mergeSort=new MergeSort();
+
+        populate(max);
+
+
+        StopWatch watch = new StopWatch();
+        watch.start();
+        // call to the methods you want to benchmark
+        mergeSort.mergeSort( 0, max - 1);
+        watch.stop();
+        long result = watch.getTotalTimeMillis();
+        System.out.println("time taken  "+result);
+// some time passes
+//
+//        for (int i = 0; i < arr.length ; i++) {
+//            System.out.print(arr[i]+"  ");
+//        }
+
+    }
+
+
+
+
+}
